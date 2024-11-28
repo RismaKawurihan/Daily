@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
@@ -81,3 +82,6 @@ To learn more about React Native, take a look at the following resources:
 =======
 # Weather-Vision
 >>>>>>> da26a7e9f21fcebb4f3253604d08dd4f023b336a
+=======
+# Weather-Vision
+>>>>>>> 22744ba213bda803a087eadca84a66d56647e6a0
