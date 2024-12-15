@@ -3,26 +3,28 @@ import { SafeAreaView, View, TextInput, Button, StyleSheet, Text, FlatList, Touc
 import { ScrollView } from 'react-native-virtualized-view';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faGraduationCap, faPenToSquare } from '@fortawesome/free-solid-svg-icons'
+import DatePicker from 'react-native-modal-datetime-picker';  // Assuming you're using this package
 
 const Createdata = () => {
-    const jsonUrl = 'http://10.0.2.2:3000/mahasiswa';
-    const [first_name, setFirstName] = useState('');
-    const [last_name, setLastName] = useState('');
-    const [kelas, setKelas] = useState('');
-    const [gender, setGender] = useState('');
-    const [email, setEmail] = useState('');
-    const [selectedUser, setSelectedUser] = useState({});
+    const jsonUrl = 'http://10.0.2.2:3000/planning';
+    
+    const [plan, setPlan] = useState('');
+    const [date, setDate] = useState(new Date());
+    const [place, setPlace] = useState('');
+    const [identify, setIdentify] = useState('');
+    const [story, setStory] = useState('');
+    const [showDatePicker, setShowDatePicker] = useState(false); 
 
     const [isLoading, setLoading] = useState(true);
-    const [dataUser, setDataUser] = useState({});
+    const [dataUser, setDataUser] = useState([]);
     const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
         fetch(jsonUrl)
             .then((response) => response.json())
             .then((json) => {
-                console.log(json)
-                setDataUser(json)
+                console.log(json);
+                setDataUser(json);
             })
             .catch((error) => console.error(error))
             .finally(() => setLoading(false));
@@ -32,56 +34,51 @@ const Createdata = () => {
         fetch(jsonUrl)
             .then((response) => response.json())
             .then((json) => {
-                console.log(json)
-                setDataUser(json)
+                console.log(json);
+                setDataUser(json);
             })
             .catch((error) => console.error(error))
             .finally(() => setLoading(false));
     }
 
-
     const selectItem = (item) => {
-        setSelectedUser(item);
-        setFirstName(item.first_name);
-        setLastName(item.last_name);
-        setKelas(item.kelas);
-        setGender(item.gender);
-        setEmail(item.email);
-    }
+        setPlan(item.plan);
+        setDate(new Date(item.date));  // Assuming 'date' is in a compatible format
+        setPlace(item.place);
+        setIdentify(item.identify);
+        setStory(item.story);
+    };
 
     const submit = () => {
         const data = {
-            first_name: first_name,
-            last_name: last_name,
-            email: email,
-            kelas: kelas,
-            gender: gender,
+            plan,
+            date: date.toISOString(),
+            place,
+            identify,
+            story,
         };
-        fetch(`http://10.0.2.2:3000/mahasiswa/${selectedUser.id}`, {
+
+        fetch(`http://10.0.2.2:3000/planning/${selectedUser.id}`, {
             method: 'PATCH',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
         })
             .then((response) => response.json())
             .then((json) => {
                 console.log(json);
-                alert('Data tersimpan');
-                setFirstName('');
-                setLastName('');
-                setKelas('');
-                setGender('');
-                setEmail('');
+                alert('Data saved');
+                setPlan('');
+                setDate(new Date());
+                setPlace('');
+                setIdentify('');
+                setStory('');
                 refreshPage();
-                FlatList.refresh();
             })
-    }
-
-
-
-
+            .catch((error) => console.error(error));
+    };
 
     return (
         <SafeAreaView>
@@ -91,44 +88,72 @@ const Createdata = () => {
                         <Text style={styles.cardtitle}>Loading...</Text>
                     </View>
                 ) : (
-                    <View>
-                        <View>
-                            <Text style={styles.title}>Edit Data Mahasiswa</Text>
-                            <View style={styles.form}>
-                                <TextInput style={styles.input} placeholder="Nama Depan" value={first_name} onChangeText={(value) => setFirstName(value)} />
-                                <TextInput style={styles.input} placeholder="Nama Belakang" value={last_name} onChangeText={(value) => setLastName(value)} />
-                                <TextInput style={styles.input} placeholder="Kelas" value={kelas} onChangeText={(value) => setKelas(value)} />
-                                <TextInput style={styles.input} placeholder="Jenis Kelamin" value={gender} onChangeText={(value) => setGender(value)} />
-                                <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={(value) => setEmail(value)} />
-                                <Button title="Edit" style={styles.button} onPress={submit} />
-                            </View>
+                    <View >
+                        <Text style={styles.title}>Edit Rencanamu</Text>
+                        <View style={styles.form}>
+                            <TextInput 
+                                style={styles.input} 
+                                placeholder="Rencana" 
+                                value={plan} 
+                                onChangeText={(value) => setPlan(value)} 
+                            />
+                            <TextInput 
+                                style={styles.input} 
+                                placeholder="Tempat" 
+                                value={place} 
+                                onChangeText={(value) => setPlace(value)} 
+                            />
+                            <TextInput 
+                                style={styles.input} 
+                                placeholder="Keperluan" 
+                                value={identify} 
+                                onChangeText={(value) => setIdentify(value)} 
+                            />
+                            <TextInput 
+                                style={styles.input} 
+                                placeholder="Cerita" 
+                                value={story} 
+                                onChangeText={(value) => setStory(value)} 
+                            />
+                            <TextInput 
+                                style={styles.input} 
+                                placeholder="Pilih Tanggal" 
+                                value={date.toISOString().split('T')[0]} 
+                                onFocus={() => setShowDatePicker(true)} 
+                            />
+                            {showDatePicker && (
+                                <DatePicker
+                                    mode="date"
+                                    date={date}
+                                    onDateChange={setDate}
+                                    onConfirm={() => setShowDatePicker(false)}
+                                    onCancel={() => setShowDatePicker(false)}
+                                />
+                            )}
+                            <Button title="Edit" style={styles.button} onPress={submit} />
                         </View>
+
                         <View style={styles.devider}></View>
                         <ScrollView>
                             <FlatList
                                 style={{ marginBottom: 10 }}
                                 data={dataUser}
-                                onRefresh={() => { refreshPage() }}
+                                onRefresh={refreshPage}
                                 refreshing={refresh}
-                                keyExtractor={({ id }, index) => id}
+                                keyExtractor={({ id }) => id.toString()}
                                 renderItem={({ item }) => (
-                                    <View>
-                                        <TouchableOpacity onPress={() => selectItem(item)}>
-                                            <View style={styles.card}>
-                                                <View style={styles.avatar}>
-                                                    <FontAwesomeIcon icon={faGraduationCap} size={50} />
-                                                </View>
-                                                <View>
-                                                    <Text style={styles.cardtitle}>{item.first_name} {item.first_name}</Text>
-                                                    <Text>{item.kelas}</Text>
-                                                    <Text>{item.gender}</Text>
-                                                </View>
-                                                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-end' }}>
-                                                    <FontAwesomeIcon icon={faPenToSquare} size={20} />
-                                                </View>
+                                    <TouchableOpacity onPress={() => selectItem(item)}>
+                                        <View style={styles.card}>
+                                            <View>
+                                                <Text style={styles.cardtitle}>{item.plan}</Text>
+                                                <Text>{item.place}</Text>
+                                                <Text>{item.identify}</Text>
                                             </View>
-                                        </TouchableOpacity>
-                                    </View>
+                                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-end' }}>
+                                                <FontAwesomeIcon icon={faPenToSquare} size={20} />
+                                            </View>
+                                        </View>
+                                    </TouchableOpacity>
                                 )}
                             />
                         </ScrollView>
@@ -136,62 +161,83 @@ const Createdata = () => {
                 )}
             </View>
         </SafeAreaView>
+    );
+};
 
-
-    )
-}
-
-export default Createdata
+export default Createdata;
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        position: 'relative',
+        backgroundColor: '#D4F6FF',
+    },
     title: {
-        paddingVertical: 12,
-        backgroundColor: '#333',
+        padding: 12,
+        marginTop: 20,
+        backgroundColor: '#A294F9', 
         color: 'white',
         fontSize: 20,
         fontWeight: 'bold',
         textAlign: 'center',
+        borderRadius: 8,
+        position: 'absolute',
+        top: 0,
+        left: 20,
+        right: 20,
     },
     form: {
-        padding: 10,
-        marginBottom: 15,
+        padding: 15, 
+        marginTop: 80, 
+        marginBottom: 20, 
+        borderRadius: 8,
+        backgroundColor: '#f4f4f4', 
+        position: 'relative',
     },
     input: {
-        backgroundColor: '#e0f7fa',
+        backgroundColor: '#E2D3F0', 
         borderWidth: 1,
-        borderColor: '#777',
+        borderColor: '#ddd', 
         borderRadius: 8,
-        padding: 8,
-        width: '100%',
-        marginVertical: 5,
+        padding: 12,
+        fontWeight: 'bold',
+        marginVertical: 8, 
     },
     button: {
-        marginVertical: 10,
+        marginVertical: 15, 
+        backgroundColor: '#A294F9', 
+        borderRadius: 8,
     },
     avatar: {
         borderRadius: 100,
         width: 80,
     },
     cardtitle: {
-        fontSize: 14,
+        fontSize: 16, 
         fontWeight: 'bold',
     },
     card: {
         flexDirection: 'row',
-        padding: 20,
+        padding: 15,
         borderRadius: 10,
         backgroundColor: 'white',
         shadowColor: '#000',
         shadowOffset: {
-            width: 1,
-            height: 1,
+            width: 0,
+            height: 2,
         },
-        shadowOpacity: 0.20,
-        shadowRadius: 1.41,
-        elevation: 2,
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
         marginHorizontal: 20,
-        marginVertical: 7
+        marginVertical: 5, 
     },
-
-})
+    devider: {
+        height: 1,
+        backgroundColor: '#D4F6FF', 
+        marginVertical: 10,
+        width: '90%',
+        alignSelf: 'center', 
+    },
+});
 

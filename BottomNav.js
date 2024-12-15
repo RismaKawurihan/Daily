@@ -5,7 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faHouseUser, faGlobe, faGears } from '@fortawesome/free-solid-svg-icons';
 import { WebView } from 'react-native-webview';
-import MapView from './MapView';
+import EditView from './Editdata';
 import LandingPage from './Landing';
 
 
@@ -17,14 +17,14 @@ function HomeScreen() {
 
 function MapScreen() {
   return (
-    <MapView />
+    <WebView
+      source={{ uri: 'https://leaflet-inky-tau.vercel.app/home' }} />
   );
 }
 
-function WebScreen() {
+function EditScreen() {
   return (
-    <WebView
-      />
+    <EditView />
   );
 }
 
@@ -33,7 +33,32 @@ const Tab = createBottomTabNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Tab.Navigator>
+      <Tab.Navigator
+        screenOptions={{
+          tabBarStyle: {
+            position: 'absolute', // Membuat tab bar mengambang
+            bottom: 15, // Jarak dari bagian bawah layar
+            left: 10, // Jarak dari sisi kiri
+            right: 10, // Jarak dari sisi kanan
+            elevation: 5, // Memberikan efek bayangan (Android)
+            backgroundColor: '#ffffff', // Warna latar belakang tab bar
+            borderRadius: 20, // Membuat border-radius
+            height: 50, // Tinggi tab bar
+            shadowColor: '#000', // Warna bayangan (iOS)
+            shadowOffset: { width: 0, height: 10 }, // Posisi bayangan (iOS)
+            shadowOpacity: 0.25, // Transparansi bayangan (iOS)
+            shadowRadius: 3.5, // Radius bayangan (iOS)
+          },
+          tabBarActiveTintColor: 'blue', // Warna tab aktif
+          tabBarInactiveTintColor: 'gray', // Warna tab tidak aktif
+          tabBarLabelStyle: {
+            fontSize: 12,
+            marginTop: -5, // Ukuran teks label
+          },
+          headerShown: false, 
+          paddingVertical: 5,// Menonaktifkan header
+        }}
+      >
         <Tab.Screen name="Landing" component={HomeScreen}
           options={{
             headerShown: false,
@@ -48,7 +73,7 @@ export default function App() {
               <FontAwesomeIcon icon={faGlobe} color={color} size={20} />
             ),
           }} />
-        <Tab.Screen name="GITHUB" component={WebScreen}
+        <Tab.Screen name="Editing" component={EditScreen}
           options={{
             headerShown: false,
             tabBarIcon: ({ color }) => (
