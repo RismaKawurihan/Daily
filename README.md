@@ -1,3 +1,7 @@
+<div align="center">
+<img src="https://github.com/user-attachments/assets/887a72f8-8672-415b-9023-691b00af39b1">
+</div>
+
 # DAILY APP
 Aplikasi DailyApp dirancang untuk menulisakan mengenai rencana kegiatan, pengalaman penulis di suatu tempat, serta informasi mengenai lokasi main. Fitur di aplikasi ini meliputi, Planning untuk membuat suatu rencana perjalanan atau cerita pengalaman penulis di suatu tempat, fitur Memories digunakan untuk menampilkan cerita atau rencana yang dibuat oleh penulis, fitur rekomendasi digunakan untuk menampilkan rekomendasi suatu tempat untuk makan, main, mengerjakan tugas, rapat, dan lain sebagainya. Fitu map menjadi pelengkap untuk menmapilkan persebaran lokasi yang direkomdasikan. Fitur Editing digunakan untuk melakukan perubahan pada rencana atau perjalanan penulis. 
 ## Komponen Pembangun Produk
